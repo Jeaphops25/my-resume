@@ -12,6 +12,7 @@ permissions:
 
 env:
   AWS_REGION: us-east-1
+  AWS_ROLE: ${{ secrets.AWS_ACTION_ROLE }}
 
 jobs: 
   build:

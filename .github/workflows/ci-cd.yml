@@ -23,7 +23,7 @@ jobs:
       - name: AWS credentials configuration
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          role-to-assume: ${{ env.AWS_ROLE}} # OIDC
+          role-to-assume: ${{ env.AWS_ROLE }} # OIDC
           aws-region: ${{ env.AWS_REGION }}
       - name: login to ECR
         uses: aws-actions/amazon-ecr-login@v1

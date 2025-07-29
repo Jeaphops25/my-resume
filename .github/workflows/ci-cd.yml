@@ -14,7 +14,7 @@ env:
   AWS_REGION: us-east-1
   AWS_ROLE: ${{ secrets.AWS_ACTION_ROLE }}
   ECR_REPO_NAME: dev
-  IMAGE_TAG: ${{github.run_number}}
+  IMAGE_TAG: ${{ github.run_number }}
 
 jobs: 
   build:
@@ -29,7 +29,8 @@ jobs:
           aws-region: ${{ env.AWS_REGION }}
       - name: login to ECR
         uses: aws-actions/amazon-ecr-login@v1
-        id: login to ECR
+        id: ecr-login
+        
       - name: build tag and push Image
         id: build-and-push
         run: |

@@ -1,0 +1,44 @@
+name: Build, push and deploy Image
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  id-token: write 
+  contents: read 
+
+env:
+  AWS_REGION: us-east-1
+  AWS_ROLE: ${{ secrets.AWS_ACTION_ROLE }}
+  ECR_REPO_NAME: dev
+  IMAGE_TAG: ${{ github.run_number }}
+  TASK_DEFINITION: nginx-task
+  ECS_CLUSTER: nginx-cluster
+  ECS_SERVICE: nginx-service
+  CONTAINER_NAME: nginx
+
+jobs: 
+  build:
+    runs-on: ubuntu-latest # github runner
+    steps:
+      - name: clone repository
+        uses: actions/checkout@v3
+      - name: AWS credentials configuration
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ env.AWS_ROLE }} # OIDC
+          aws-region: ${{ env.AWS_REGION }}
+      - name: login to ECR
+        uses: aws-actions/amazon-ecr-login@v1
+        id: ecr-login
+
+      - name: build tag and push Image
+        id: build-and-push
+        run: |
+            docker build -t ${{ steps.ecr-login.outputs.registry }}/${{ env.ECR_REPO_NAME }}:${{env.IMAGE_TAG}} .
+            docker push ${{ steps.ecr-login.outputs.registry }}/${{ env.ECR_REPO_NAME }}:${{env.IMAGE_TAG}}
+
+
